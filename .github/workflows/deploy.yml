@@ -6,11 +6,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Build Docker image
-        run: docker build -t my-flask-app .
-      - name: Push to EC2 and run
-        run: ssh ubuntu@<EC2_IP> << 'EOF'
+    - uses: actions/checkout@v3
+
+    - name: Build Docker image
+      run: docker build -t my-flask-app .
+
+    - name: Push to EC2 and run
+      run: |
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_IP }} << 'EOF'
           docker stop flask || true
           docker rm flask || true
           docker run -d --name flask -p 80:8080 my-flask-app
